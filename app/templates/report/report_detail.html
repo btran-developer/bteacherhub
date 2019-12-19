@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+	<h1 class="text-center">{{ title }}</h1>
+	{% include '_flash_messages.html' %}
+	<div class="card py-4">
+		<div class="card-header">
+			Submitted by: {{ report.submitted_by.teacher_name or "n/a" }}
+		</div>
+		<div class="card-body">
+			<h5 class="card-title">{{ report.teaching_date }}</h5>
+			<p class="card-text">
+				<span id="report-id" hidden>{{ report.id }}</span>
+				<div><strong>Main teacher: </strong>{{ report.main_teacher.teacher_name }}</div>
+				<p><strong>Assistant teacher: </strong>{{ report.assistant_teacher.teacher_name or "n/a" }}</p>
+				<div><strong>Teaching content: </strong></div>
+				<p>{{ report.teaching_content }}</p>
+				<div><strong>Student attendance: </strong>{{ report.student_attendance }}</div>
+			</p>
+			<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteReportModal">
+			  Delete Report
+			</button>
+		</div>
+		<div class="card-footer text-muted">
+			Submitted on {{ report.submit_date }}
+		</div>
+	</div>
+	<div class="modal fade" id="deleteReportModal" tabindex="-1" role="dialog" aria-labelledby="deleteReportModalLabel" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="deleteReportModalLabel">Delete Confirmation</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  <div class="modal-body">
+			Are you sure you want to delete this report?
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			<button type="button" class="btn btn-primary confirm-delete-btn">Yes</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<script>
+		let confirmDeleteButton = $(".confirm-delete-btn");
+		let reportId = $("#report-id").text();
+		confirmDeleteButton.on('click', e => {
+			$.ajax({
+				method: 'DELETE',
+				url: $SCRIPT_ROOT + `/report/${reportId}`
+			}).done((data, textStatus) => {
+				if(textStatus === 'success') {
+					window.location.href = '/report'
+				} else {
+					alert('Something went wrong! Unable to delete the report.');
+				}
+			})
+		});
+	</script>
+{% endblock %}

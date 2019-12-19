@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+	<h1 class="text-center">{{ title }}</h1>
+	<form class="py-4" action="" method="POST" novalidate>
+		{{ form.hidden_tag() }}
+		<div class="form-group">
+			{{ form.main_teacher.label }}:
+			{{ form.main_teacher(class="form-control")}}
+			{% for error in form.main_teacher.errors %}
+				<div class="main-teacher-error invalid-feedback">{{ error }}</div>
+			{% endfor %}
+		</div>
+		<div class="form-group">
+			{{ form.assistant_teacher.label }}:
+			{{ form.assistant_teacher(class="form-control")}}
+			{% for error in form.assistant_teacher.errors %}
+				<div class="assistant-teacher-error invalid-feedback">{{ error }}</div>
+			{% endfor %}
+		</div>
+		<div class="form-group">
+			{{ form.teaching_date.label }}:
+			{{ form.teaching_date(class="form-control")}}
+			{% for error in form.teaching_date.errors %}
+				<div class="teaching-date-error invalid-feedback">{{ error }}</div>
+			{% endfor %}
+		</div>
+		<div class="form-group">
+			{{ form.teaching_content.label }}:
+			{{ form.teaching_content(rows='10', cols='60', class="form-control")}}
+			{% for error in form.teaching_content.errors %}
+				<div class="teaching-content-error invalid-feedback">{{ error }}</div>
+			{% endfor %}
+		</div>
+		<div class="form-group">
+			{{ form.student_attendance.label }}:
+			{{ form.student_attendance(class="form-control")}}
+			{% for error in form.student_attendance.errors %}
+				<div class="student-attendance-error invalid-feedback">{{ error }}</div>
+			{% endfor %}
+		</div>
+		<div class="form-group">
+			{{ form.submitted_by.label }}:
+			{{ form.submitted_by(class="form-control")}}
+			{% for error in form.submitted_by.errors %}
+				<div class="submitted-by-error invalid-feedback">{{ error }}</div>
+			{% endfor %}
+		</div>
+		{{ form.submit(class="btn btn-primary btn-block") }}
+	</form>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/report_submit.js') }}">
+	</script>
+{% endblock %}

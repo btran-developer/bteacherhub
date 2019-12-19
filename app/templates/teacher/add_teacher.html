@@ -1,0 +1,21 @@
+{% extends 'base.html' %} 
+
+{% block title %}{{ title }}{% endblock %} 
+
+{% block content %}
+	<h1 class="text-center">{{ title }}</h1>
+	{% include '_flash_messages.html' %}
+	<form  class="py-4" action="" method="POST" novalidate>
+	  {{ form.hidden_tag() }}
+	  <div class="form-group">
+		{{ form.teacher_name.label }}:
+		{{ form.teacher_name(size=80, class="form-control") }}
+		{% for error in form.teacher_name.errors %}
+			<div class="teacher-name-error invalid-feedback">{{ error }}</div>
+		{% endfor %}
+	  </div>
+	  {{ form.submit(class="btn btn-primary btn-block") }}
+	</form>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/add_teacher.js') }}">
+	</script>
+{% endblock %}

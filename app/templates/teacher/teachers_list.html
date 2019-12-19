@@ -1,0 +1,237 @@
+{% extends 'base.html' %} 
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<h1 class="text-center">{{ title }}</h1>
+<ul class="list-group py-4">
+  {% for teacher in teachers %}
+  <li
+    class="list-group-item d-flex justify-content-between align-items-center teacher-list-item
+		  {% if not teacher.is_active %}list-group-item-dark{% endif %}"
+    data-teacher-id="{{ teacher.id }}"
+    data-teacher-name="{{ teacher.teacher_name }}"
+  >
+    <span class="teacher-name-text">{{ teacher.teacher_name }}</span>
+    <span class="btn-group">
+      <span class="edit-icon"><i class="fas fa-edit"></i></span>
+      <span class="toggle-lock-unlock">
+        {% if teacher.is_active %}
+        <i class="fas fa-lock"></i>
+        {% else %}
+        <i class="fas fa-lock-open"></i>
+        {% endif %}
+      </span>
+      <span class="cancel-icon"><i class="fas fa-times"></i></span>
+    </span>
+  </li>
+  {% endfor %}
+</ul>
+<div
+  class="modal fade"
+  id="editTeacherModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="editTeacherModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editTeacherModalLabel">Updating Teacher</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="teacher">Teacher:</label>
+          <input type="text" name="teacher" class="form-control" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" id="saveTeacherChanges">
+          Save changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="modal fade"
+  id="toggleTeacherModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="toggleTeacherModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="toggleTeacherModalLabel">Confirmation</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Message
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" id="toggleTeacher">
+          Yes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  let selectedTeacher;
+  const teacherNameInput = $("input[name='teacher']");
+  const editTeacherModal = $("#editTeacherModal");
+  const toggleTeacherModal = $("#toggleTeacherModal");
+
+  $(".btn-group").hide();
+
+  $(".teacher-list-item").on("click", function(e) {
+    e.stopPropagation();
+    $(this)
+      .find(".btn-group")
+      .show();
+  });
+
+  $(".cancel-icon").on("click", function(e) {
+    e.stopPropagation();
+    $(this)
+      .parent()
+      .hide();
+  });
+
+  $(".toggle-lock-unlock").on("click", function(e) {
+    e.stopPropagation();
+    let icon = $(this).find("i");
+
+    if (icon.attr("class") === "fas fa-lock") {
+      toggleTeacherModal
+        .find("#toggleTeacherModalLabel")
+        .text("Lock Confirmation");
+      toggleTeacherModal
+        .find(".modal-body")
+        .text("Are you sure you want to lock this teacher?");
+    } else {
+      toggleTeacherModal
+        .find("#toggleTeacherModalLabel")
+        .text("Unlock Confirmation");
+      toggleTeacherModal
+        .find(".modal-body")
+        .text("Are you sure you want to unlock this teacher?");
+    }
+
+    toggleTeacherModal.modal("show");
+    selectedTeacher = $(this).closest(".teacher-list-item");
+  });
+
+  $("#toggleTeacher").on("click", function(e) {
+    let iconButton = selectedTeacher.find(".toggle-lock-unlock");
+    let icon = iconButton.find("i");
+
+    if (icon.attr("class") === "fas fa-lock") {
+      $.ajax({
+        method: "GET",
+        url:
+          $SCRIPT_ROOT +
+          `/teacher/${selectedTeacher.data("teacher-id")}/set-inactive`
+      }).done((data, textStatus) => {
+        if (textStatus === "success") {
+          icon.addClass("fa-lock-open");
+          icon.removeClass("fa-lock");
+          selectedTeacher.addClass("list-group-item-dark");
+          alert(data.message);
+        } else {
+          alert("Failed to lock teacher.");
+        }
+      }).fail((jqXHR, textStatus, errorThrown) => {
+		alert(`${errorThrown}! Please check back later.`);
+      });
+    } else {
+      $.ajax({
+        method: "GET",
+        url:
+          $SCRIPT_ROOT +
+          `/teacher/${selectedTeacher.data("teacher-id")}/set-active`
+      }).done((data, textStatus) => {
+        if (textStatus === "success") {
+          icon.addClass("fa-lock");
+          icon.removeClass("fa-lock-open");
+          selectedTeacher.removeClass("list-group-item-dark");
+          alert(data.message);
+        } else {
+          alert("Failed to unlock teacher.");
+        }
+      }).fail((jqXHR, textStatus, errorThrown) => {
+		alert(`${errorThrown}! Please check back later.`);
+	  });
+    }
+    toggleTeacherModal.modal("hide");
+  });
+
+  $(".edit-icon").on("click", function(e) {
+    editTeacherModal.modal("show");
+    editTeacherModal.find(".form-control").removeClass("is-invalid");
+    selectedTeacher = $(this).closest(".teacher-list-item");
+    teacherNameInput.val(selectedTeacher.data("teacher-name"));
+  });
+
+  $("#saveTeacherChanges").on("click", function(e) {
+    let teacher_name = $("input[name='teacher']").val();
+    let errorText = $(
+      "<div class='teacher-name-error invalid-feedback'></div>"
+    );
+    let textField = editTeacherModal.find(".form-control");
+
+    if (!teacher_name) {
+      editTeacherModal
+        .find(".form-group")
+        .append(errorText.text("This field can't be empty."));
+      textField.addClass("is-invalid");
+      console.log(editTeacherModal.find(".form-group"));
+      return;
+    }
+
+    $.ajax({
+      method: "PATCH",
+      url: $SCRIPT_ROOT + `/teacher/${selectedTeacher.data("teacher-id")}`,
+      data: {
+        teacher_name
+      }
+    }).done((data, textStatus) => {
+      if (textStatus === "success") {
+        selectedTeacher.find(".teacher-name-text").text(teacher_name);
+        textField.removeClass("is-invalid");
+      } else {
+        editTeacherModal.find(".form-group").append(errorText.text(data.error));
+        alert("Failed to update teacher name.");
+      }
+
+      editTeacherModal.modal("hide");
+    }).fail((jqXHR, textStatus, errorThrown) => {
+      alert(`${errorThrown}! Please check back later.`);
+    });;
+  });
+</script>
+{% endblock %}

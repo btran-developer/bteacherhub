@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+ 
+{% block title %}{{ title }}{% endblock %} 
+
+{% block content %}
+<h1 class="text-center">{{ title }}</h1>
+{% include '_flash_messages.html' %}
+<div class="list-group py-4 text-center">
+  <h3 class="list-group-item active">Report</h3>
+  <a
+    class="list-group-item list-group-item-action"
+    href="{{ url_for('report_bp.submit_report') }}"
+  >
+    Submit A Report
+  </a>
+  <a
+    class="list-group-item list-group-item-action"
+    href="{{ url_for('report_bp.get_reports') }}"
+  >
+    Get Reports
+  </a>
+  <a
+    class="list-group-item list-group-item-action"
+    href="{{ url_for('report_bp.get_monthly_report') }}"
+  >
+    Get Monthly Report
+  </a>
+</div>
+<div class="list-group py-4 text-center">
+  <h3 class="list-group-item active">Teacher</h3>
+  <a
+    class="list-group-item list-group-item-action"
+    href="{{ url_for('teacher_bp.add_teacher') }}"
+    >Add Teacher</a
+  >
+  <a
+    class="list-group-item list-group-item-action"
+    href="{{ url_for('teacher_bp.get_teachers') }}"
+    >Teacher List</a
+  >
+</div>
+{% if g.user %}
+	<div class="text-center py-4">
+	  <a class="btn btn-secondary btn-block btn-lg" href="{{ url_for('auth.logout') }}">
+	  Logout
+	  </a>
+	</div>
+{% endif %} 
+{% endblock %}

@@ -1,0 +1,12 @@
+body {
+  background-color: #c1c8e4 !important;
+}
+
+.navbar {
+  background-color: #5680e9 !important;
+}
+
+.toggle-lock-unlock,
+.edit-icon {
+  padding-right: 20px;
+}

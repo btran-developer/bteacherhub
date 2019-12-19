@@ -1,0 +1,25 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+	<form method='POST' novalidate>
+		{{ form.hidden_tag() }}
+		<div class="form-group">
+			{{ form.from_date.label }}
+			{{ form.from_date(class="form-control")}}
+			{% for error in form.from_date.errors %}
+				<div style="color: red;">{{ error }}</div>
+			{% endfor %}
+		</div>
+		<br >
+		<div class="form-group">
+			{{ form.to_date.label }}
+			{{ form.to_date(class="form-control")}}
+			{% for error in form.to_date.errors %}
+				<div style="color: red;">{{ error }}</div>
+			{% endfor %}
+		</div>
+		<br >
+		{{ form.submit(class="btn btn-primary") }}
+	</form>
+<div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %} 
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<h1 class="text-center">{{ title }}</h1>
+<form method='POST' novalidate>
+	{{ form.hidden_tag() }}
+	<div class="form-group">
+		{{ form.month.label }}
+		{{ form.month(class="form-control")}}
+		{% for error in form.month.errors %}
+			<div class="month-error invalid-feedback">{{ error }}</div>
+		{% endfor %}
+	</div>
+	<div class="form-group">
+		{{ form.year.label }}
+		{{ form.year(class="form-control")}}
+		{% for error in form.year.errors %}
+			<div class="year-error invalid-feedback">{{ error }}</div>
+		{% endfor %}
+	</div>
+	<div class="form-group">
+		{{ form.pay_per_day.label }}
+		{{ form.pay_per_day(class="form-control")}}
+		{% for error in form.pay_per_day.errors %}
+			<div class="pay-per-day-error invalid-feedback">{{ error }}</div>
+		{% endfor %}
+	</div>
+	{{ form.submit(class="btn btn-primary float-right btn-block") }}
+</form>
+<script>
+	if ($(".invalid-feedback").length) {
+	  $(".month-error").length
+		? $("input[name='month']").addClass("is-invalid")
+		: null;
+	  $(".year-error").length
+		? $("input[name='year']").addClass("is-invalid")
+		: null;
+	  $(".pay-per-day-error").length
+	    ? $("input[name='pay_per_day']").addClass("is-invalid")
+		: null;
+	}
+</script>
+{% endblock %}
