@@ -1,9 +1,9 @@
-import os
 from dotenv import load_dotenv
+import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-if app.debug:
+if os.environ.get("IS_DEV"):
     load_dotenv(os.path.join(basedir, '.env'))
 
 
