@@ -10,7 +10,7 @@ Flask-WTF==0.14.2
 itsdangerous==1.1.0
 Jinja2==2.10.3
 lml==0.0.9
-Mako==1.1.0
+Mako==1.2.2
 MarkupSafe==1.1.1
 pycodestyle==2.5.0
 pyexcel==0.5.15
